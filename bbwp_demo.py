@@ -15,10 +15,7 @@ st.markdown("Calcula el indicador BBWP para 20 activos en temporalidad diaria y 
 # 🔹 Lista de tickers de prueba
 # ===========================================
 tickers = [
-    "AAPL", "MSFT", "AMZN", "NVDA", "META",
-    "TSLA", "GOOGL", "NFLX", "BABA", "JPM",
-    "BAC", "V", "MA", "DIS", "KO",
-    "PFE", "T", "INTC", "XOM", "COST"
+    "AGNC","AMAT","AAPL","AFRM","ABNB","ABBV","AAL","AMD","AC","BAC","AXP","AVGO","BA","C","BMY","AMZN","CAT","CLF","COST","CRM","CSCO","CVS","CVX","DAL","DIS","DVN","ETSY","F","FANG","FCX","FDX","FSLR","FUBO","BIMBO A","CHDRAUI B","BBAJIO O","AMX B","GAP B","ALPEK A","BABA N","ASUR B","BOLSA A","GE","HD","GCC","GME","GOOGL","GM","KO","INTC","JNJ","JPM","LCID","KIMBER A","LLY","ALFA A","LAB B","GFINBUR O","ACTINVR B","LVS","MARA","META","MCD","LUV","MA","MRK","MU","MSFT","MRNA","NFLX","NKE","NVAX","NVDA","ORCL","PARA","PG","PEP","PFE","PLTR","PYPL","PINS","QCOM","RCL","RIVN","RIOT","SBUX","SOFI","SPCE","T","TGT","TMO","TSLA","CEMEX CPO","TX","UAL","R A","KOF UBL","GRUMA B","GMEXICO B","WFC","WMT","VZ","XOM","ACWI","AAXJ","ZM","XYZ","BIL","BOTZ","DIA","EEM","EWZ","FAZ","FAS","GDX","IAU","GLD","INDA","KWEB","LIT","MCHI","IVV","QLD","QQQ","QCLN","PSQ","SHV","SOXL","SHY","SLV","SOXS","SPLG","SOXX","SPXS","SPXL","SQQQ","TECS","TECL","SPY","TAN","TLT","TQQQ","TNA","TZA","USO","VNQ","VEA","VT","VOO","VGT","VTI","VWO","VYM","XLE","XLK","XLV","MAYA","XLF","VOLAR A","TSM N","MELI N"
 ]
 
 # ===========================================
