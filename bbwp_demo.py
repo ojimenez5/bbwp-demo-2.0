@@ -2,20 +2,29 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import yfinance as yf
-import datetime
 
 # ===========================================
 # 🔹 Configuración inicial
 # ===========================================
-st.set_page_config(page_title="BBWP Dashboard", layout="wide")
-st.title("📊 BBWP Dashboard (Versión de Prueba con 20 Tickers)")
-st.markdown("Calcula el indicador BBWP para 20 activos en temporalidad diaria y semanal.")
+st.set_page_config(page_title="BBWP Dashboard - 171 Tickers", layout="wide")
+st.title("📊 BBWP Dashboard (171 Tickers)")
+st.markdown("Calcula el indicador **BBWP** para los 171 activos disponibles del Reto Actinver en temporalidad diaria o semanal.")
 
 # ===========================================
-# 🔹 Lista de tickers de prueba
+# 🔹 Lista completa de 171 tickers
 # ===========================================
 tickers = [
-    "AGNC","AMAT","AAPL","AFRM","ABNB","ABBV","AAL","AMD","AC","BAC","AXP","AVGO","BA","C","BMY","AMZN","CAT","CLF","COST","CRM","CSCO","CVS","CVX","DAL","DIS","DVN","ETSY","F","FANG","FCX","FDX","FSLR","FUBO","BIMBO A","CHDRAUI B","BBAJIO O","AMX B","GAP B","ALPEK A","BABA N","ASUR B","BOLSA A","GE","HD","GCC","GME","GOOGL","GM","KO","INTC","JNJ","JPM","LCID","KIMBER A","LLY","ALFA A","LAB B","GFINBUR O","ACTINVR B","LVS","MARA","META","MCD","LUV","MA","MRK","MU","MSFT","MRNA","NFLX","NKE","NVAX","NVDA","ORCL","PARA","PG","PEP","PFE","PLTR","PYPL","PINS","QCOM","RCL","RIVN","RIOT","SBUX","SOFI","SPCE","T","TGT","TMO","TSLA","CEMEX CPO","TX","UAL","R A","KOF UBL","GRUMA B","GMEXICO B","WFC","WMT","VZ","XOM","ACWI","AAXJ","ZM","XYZ","BIL","BOTZ","DIA","EEM","EWZ","FAZ","FAS","GDX","IAU","GLD","INDA","KWEB","LIT","MCHI","IVV","QLD","QQQ","QCLN","PSQ","SHV","SOXL","SHY","SLV","SOXS","SPLG","SOXX","SPXS","SPXL","SQQQ","TECS","TECL","SPY","TAN","TLT","TQQQ","TNA","TZA","USO","VNQ","VEA","VT","VOO","VGT","VTI","VWO","VYM","XLE","XLK","XLV","MAYA","XLF","VOLAR A","TSM N","MELI N"
+    "AGNC","AMAT","AAPL","AFRM","ABNB","ABBV","AAL","AMD","AC","BAC","AXP","AVGO","BA","BABA N","BBAJIO O",
+    "BIMBO A","BMY","BOLSA A","C","CAT","CEMEX CPO","CHDRAUI B","CLF","COST","CRM","CSCO","CVS","CVX","DAL",
+    "DIS","DVN","ETSY","F","FANG","FCX","FDX","FSLR","FUBO","GAP B","GCC","GE","GFINBUR O","GFNORTE O","GM",
+    "GME","GMEXICO B","GOOGL","GRUMA B","HD","INTC","JNJ","JPM","KIMBER A","KO","KOF UBL","LAB B","LCID","LLY",
+    "LUV","LVS","MA","MARA","MCD","MELI N","META","MRK","MRNA","MSFT","MU","NCLH N","NFLX","NKE","NU N","NVAX",
+    "NVDA","OMA B","ORCL","PARA","PEP","PFE","PG","PINS","PLTR","PYPL","QCOM","R A","RCL","RIOT","RIVN","SBUX",
+    "SHOP N","SOFI","SPCE","T","TGT","TMO","TSLA","TSM N","TX","UAL","UBER","UNH","UPST","V","VOLAR A","VZ","WFC",
+    "WMT","XOM","XYZ","ZM","AAXJ","ACWI","BIL","BOTZ","DIA","EEM","EWZ","FAS","FAZ","GDX","GLD","IAU","ICLN",
+    "INDA","IVV","KWEB","LIT","MCHI","PSQ","QCLN","QLD","QQQ","SHV","SHY","SLV","SOXL","SOXS","SOXX","SPLG",
+    "SPXL","SPXS","SPY","SQQQ","TAN","TECL","TECS","TLT","TNA","TQQQ","TZA","USO","VEA","VGT","VNQ","VOO","VT",
+    "VTI","VWO","VYM","XLE","XLF","XLK","XLV","MAYA"
 ]
 
 # ===========================================
@@ -24,9 +33,9 @@ tickers = [
 def calcular_bbwp(df, periodo=20):
     if len(df) < periodo:
         return pd.Series([np.nan] * len(df), index=df.index)
-    bb_range = df["Close"].rolling(periodo).max() - df["Close"].rolling(periodo).min()
-    bb_width = (df["Close"] - df["Close"].rolling(periodo).min()) / bb_range * 100
-    return bb_width
+    rango = df["Close"].rolling(periodo).max() - df["Close"].rolling(periodo).min()
+    ancho = (df["Close"] - df["Close"].rolling(periodo).min()) / rango * 100
+    return ancho
 
 # ===========================================
 # 🔹 Descargar datos desde Yahoo Finance
@@ -34,7 +43,7 @@ def calcular_bbwp(df, periodo=20):
 @st.cache_data(show_spinner=True)
 def descargar_datos(ticker, period="5y", interval="1d"):
     try:
-        df = yf.download(ticker, period=period, interval=interval, progress=False)
+        df = yf.download(ticker, period=period, interval=interval, progress=False, auto_adjust=True)
         df.dropna(inplace=True)
         return df
     except Exception as e:
@@ -42,51 +51,57 @@ def descargar_datos(ticker, period="5y", interval="1d"):
         return None
 
 # ===========================================
-# 🔹 Análisis principal
+# 🔹 Selector de intervalo
 # ===========================================
 intervalo = st.radio("Selecciona intervalo de análisis:", ["1d (diario)", "1wk (semanal)"])
 intervalo = "1wk" if "semanal" in intervalo else "1d"
 
-st.info(f"Descargando datos en temporalidad {intervalo}...")
+st.info(f"⏳ Descargando datos y calculando BBWP ({intervalo}) para {len(tickers)} tickers...")
 
+# ===========================================
+# 🔹 Procesamiento principal
+# ===========================================
 resultados = []
+total = len(tickers)
+barra = st.progress(0)
 
-for ticker in tickers:
+for i, ticker in enumerate(tickers):
     df = descargar_datos(ticker, interval=intervalo)
     if df is None or df.empty:
         continue
 
     df["BBWP"] = calcular_bbwp(df)
-    ultimo_valor = df["BBWP"].iloc[-1]
-
-    # Revisar si los últimos 6 periodos tienen BBWP < 15
-    ultimos = df["BBWP"].tail(6)
-    condiciones = (ultimos < 15).sum()
+    ultimos6 = df["BBWP"].tail(6)
+    bbwp_ultimo = df["BBWP"].iloc[-1]
+    conteo_bajo = (ultimos6 < 15).sum()
 
     resultados.append({
         "Ticker": ticker,
-        "Último BBWP": round(ultimo_valor, 2),
-        "Periodos <15 (últimos 6)": int(condiciones)
+        "Último BBWP": round(bbwp_ultimo, 2),
+        "Periodos <15 (últimos 6)": int(conteo_bajo)
     })
 
-# ===========================================
-# 🔹 Mostrar resultados
-# ===========================================
-df_resultados = pd.DataFrame(resultados).sort_values("Último BBWP")
-st.dataframe(df_resultados, use_container_width=True)
+    barra.progress((i + 1) / total)
 
 # ===========================================
-# 🔹 Descargar Excel
+# 🔹 Resultados y descarga
 # ===========================================
-excel_name = f"bbwp_resultados_{intervalo}.xlsx"
-df_resultados.to_excel(excel_name, index=False)
+if resultados:
+    df_resultados = pd.DataFrame(resultados).sort_values("Último BBWP")
+    st.dataframe(df_resultados, use_container_width=True)
 
-with open(excel_name, "rb") as f:
-    st.download_button(
-        label="📥 Descargar resultados en Excel",
-        data=f,
-        file_name=excel_name,
-        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    )
+    excel_name = f"bbwp_resultados_{intervalo}_171.xlsx"
+    df_resultados.to_excel(excel_name, index=False)
 
-st.success("✅ Análisis completado correctamente.")
+    with open(excel_name, "rb") as f:
+        st.download_button(
+            label="📥 Descargar resultados en Excel",
+            data=f,
+            file_name=excel_name,
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+
+    st.success("✅ Cálculo completado para los 171 tickers.")
+else:
+    st.error("⚠️ No se pudo obtener información de ningún ticker.")
+
