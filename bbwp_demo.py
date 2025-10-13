@@ -11,7 +11,7 @@ st.title("📊 BBWP Dashboard (171 Tickers)")
 st.markdown("Calcula el indicador **BBWP** para los 171 activos disponibles del Reto Actinver en temporalidad diaria o semanal.")
 
 # ===========================================
-# 🔹 Lista completa de 171 tickers
+# 🔹 Lista de tickers (171)
 # ===========================================
 tickers = [
     "AGNC","AMAT","AAPL","AFRM","ABNB","ABBV","AAL","AMD","AC","BAC","AXP","AVGO","BA","BABA N","BBAJIO O",
@@ -35,19 +35,21 @@ def calcular_bbwp(df, periodo=20):
         return pd.Series([np.nan] * len(df), index=df.index)
     rango = df["Close"].rolling(periodo).max() - df["Close"].rolling(periodo).min()
     ancho = (df["Close"] - df["Close"].rolling(periodo).min()) / rango * 100
-    return ancho
+    return ancho.reindex(df.index)
 
 # ===========================================
 # 🔹 Descargar datos desde Yahoo Finance
 # ===========================================
-@st.cache_data(show_spinner=True)
+@st.cache_data(show_spinner=False)
 def descargar_datos(ticker, period="5y", interval="1d"):
     try:
         df = yf.download(ticker, period=period, interval=interval, progress=False, auto_adjust=True)
-        df.dropna(inplace=True)
-        return df
-    except Exception as e:
-        st.warning(f"No se pudo descargar {ticker}: {e}")
+        if df is not None and not df.empty:
+            df.dropna(inplace=True)
+            return df
+        else:
+            return None
+    except Exception:
         return None
 
 # ===========================================
@@ -64,22 +66,34 @@ st.info(f"⏳ Descargando datos y calculando BBWP ({intervalo}) para {len(ticker
 resultados = []
 total = len(tickers)
 barra = st.progress(0)
+exitosos = 0
+fallidos = 0
 
 for i, ticker in enumerate(tickers):
     df = descargar_datos(ticker, interval=intervalo)
     if df is None or df.empty:
+        fallidos += 1
         continue
 
-    df["BBWP"] = calcular_bbwp(df)
-    ultimos6 = df["BBWP"].tail(6)
-    bbwp_ultimo = df["BBWP"].iloc[-1]
-    conteo_bajo = (ultimos6 < 15).sum()
+    try:
+        df["BBWP"] = calcular_bbwp(df)
+        if "BBWP" not in df or df["BBWP"].isna().all():
+            continue
 
-    resultados.append({
-        "Ticker": ticker,
-        "Último BBWP": round(bbwp_ultimo, 2),
-        "Periodos <15 (últimos 6)": int(conteo_bajo)
-    })
+        ultimos6 = df["BBWP"].tail(6)
+        bbwp_ultimo = df["BBWP"].iloc[-1]
+        conteo_bajo = (ultimos6 < 15).sum()
+
+        resultados.append({
+            "Ticker": ticker,
+            "Último BBWP": round(bbwp_ultimo, 2),
+            "Periodos <15 (últimos 6)": int(conteo_bajo)
+        })
+        exitosos += 1
+
+    except Exception:
+        fallidos += 1
+        continue
 
     barra.progress((i + 1) / total)
 
@@ -101,7 +115,7 @@ if resultados:
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         )
 
-    st.success("✅ Cálculo completado para los 171 tickers.")
+    st.success(f"✅ Cálculo completado. {exitosos} tickers exitosos, {fallidos} fallidos.")
 else:
     st.error("⚠️ No se pudo obtener información de ningún ticker.")
 
