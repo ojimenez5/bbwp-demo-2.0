@@ -14,8 +14,17 @@ st.markdown("Calcula el indicador **BBWP** para los 171 activos disponibles del 
 # 🔹 Lista de tickers (171)
 # ===========================================
 tickers = [
-    "FAS","FAZ","QLD","SOXL","SOXS","SPXL","SPXS",
-"SQQQ","TECL","TECS","TNA","TQQQ","TZA","PSQ"
+    "AGNC","AMAT","AAPL","AFRM","ABNB","ABBV","AAL","AMD","AC","BAC","AXP","AVGO","BA","BABA N","BBAJIO O",
+    "BIMBO A","BMY","BOLSA A","C","CAT","CEMEX CPO","CHDRAUI B","CLF","COST","CRM","CSCO","CVS","CVX","DAL",
+    "DIS","DVN","ETSY","F","FANG","FCX","FDX","FSLR","FUBO","GAP B","GCC","GE","GFINBUR O","GFNORTE O","GM",
+    "GME","GMEXICO B","GOOGL","GRUMA B","HD","INTC","JNJ","JPM","KIMBER A","KO","KOF UBL","LAB B","LCID","LLY",
+    "LUV","LVS","MA","MARA","MCD","MELI N","META","MRK","MRNA","MSFT","MU","NCLH N","NFLX","NKE","NU N","NVAX",
+    "NVDA","OMA B","ORCL","PARA","PEP","PFE","PG","PINS","PLTR","PYPL","QCOM","R A","RCL","RIOT","RIVN","SBUX",
+    "SHOP N","SOFI","SPCE","T","TGT","TMO","TSLA","TSM N","TX","UAL","UBER","UNH","UPST","V","VOLAR A","VZ","WFC",
+    "WMT","XOM","XYZ","ZM","AAXJ","ACWI","BIL","BOTZ","DIA","EEM","EWZ","FAS","FAZ","GDX","GLD","IAU","ICLN",
+    "INDA","IVV","KWEB","LIT","MCHI","PSQ","QCLN","QLD","QQQ","SHV","SHY","SLV","SOXL","SOXS","SOXX","SPLG",
+    "SPXL","SPXS","SPY","SQQQ","TAN","TECL","TECS","TLT","TNA","TQQQ","TZA","USO","VEA","VGT","VNQ","VOO","VT",
+    "VTI","VWO","VYM","XLE","XLF","XLK","XLV","MAYA"
 ]
 
 # ===========================================
